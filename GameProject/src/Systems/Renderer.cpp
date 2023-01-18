@@ -38,17 +38,16 @@ void Renderer::init()
 
 void Renderer::update()
 {
+    glClear(GL_COLOR_BUFFER_BIT);
 	for (int i = 0; i < game->componentManager.getComponentCount(GRAPHICS); i++)
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
 		Graphics* graphicsComponent = game->componentManager.getComponent(GRAPHICS, i);
 		glUseProgram(graphicsComponent->shaderID);//use();
 		glBindVertexArray(graphicsComponent->vaoID);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glfwSwapBuffers(game->windowManager.getWindow(0));
-		glfwPollEvents();
-        graphicsComponent = nullptr;
 	}
+    glfwSwapBuffers(game->windowManager.getWindow(0));
+    glfwPollEvents();
 }
 
 void Renderer::deleteGraphicsComponent(int index)
@@ -56,7 +55,6 @@ void Renderer::deleteGraphicsComponent(int index)
     Graphics* graphicsComponent = game->componentManager.getComponent(GRAPHICS, index);
     glDeleteBuffers(1, &graphicsComponent->vboID);
     glDeleteVertexArrays(1, &graphicsComponent->vaoID);
-    graphicsComponent = nullptr;
 }
 
 void Renderer::createShaderPrograms()
