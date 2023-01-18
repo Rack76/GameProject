@@ -112,14 +112,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\repos\OpenGL\GameProject\GameProject;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;%(AdditionalDependencies);opengl32.lib;glfw3.lib;opengl32.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,16 +139,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Systems\ComponentManager.cpp" />
+    <ClCompile Include="src\Systems\EntityManager.cpp" />
+    <ClCompile Include="src\Systems\Renderer.cpp" />
+    <ClCompile Include="src\Systems\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.fs" />
     <None Include="vertex.vs" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\shader.h" />
-    <ClInclude Include="src\VAO.h" />
-    <ClInclude Include="src\VBO.h" />
+    <ClInclude Include="src\Components\Graphics.h" />
+    <ClInclude Include="src\ComponentTypes.h" />
+    <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\Systems\ComponentManager.h" />
+    <ClInclude Include="src\Systems\EntityManager.h" />
+    <ClInclude Include="src\Systems\Renderer.h" />
+    <ClInclude Include="src\Systems\Util.h" />
+    <ClInclude Include="src\Systems\WindowManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
