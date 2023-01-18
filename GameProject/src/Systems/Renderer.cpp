@@ -1,7 +1,7 @@
 #include "glew.h"
 #include "glfw3.h"
-#include "Renderer.h"
 #include "../Game.h"
+#include "Renderer.h"
 #include "../ComponentTypes.h"
 #include <fstream>
 #include <sstream>
@@ -14,6 +14,10 @@ GLdouble vertices[] = {
      1.0,  1.0, 0.0
 };
 
+Renderer::Renderer(Game* _game) {
+    game = _game;
+}
+
 void Renderer::init()
 {
 	GLenum err = glewInit();
@@ -25,6 +29,7 @@ void Renderer::init()
 
 	glViewport(0, 0, 800, 600);
 
+    genBuffers();
     createShaderPrograms();
 
 }

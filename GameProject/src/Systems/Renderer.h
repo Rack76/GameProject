@@ -5,6 +5,7 @@ class Game;
 
 class Renderer {
 public:
+	Renderer(Game*);
 	void init();
 	void update();
 	void deleteGraphicsComponent(int);

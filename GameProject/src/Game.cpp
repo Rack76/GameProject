@@ -7,6 +7,7 @@ void Game::init()
 	Graphics* graphicsComponent0 = componentManager.getComponent(GRAPHICS, 0);
 	graphicsComponent0->vertexPath = "vertex.vs";
 	graphicsComponent0->fragmentPath = "fragment.fs";
+	renderer.init();
 }
 
 void Game::run()
