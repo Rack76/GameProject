@@ -10,21 +10,17 @@
 const unsigned int width = 800, height = 600;
 
 //temp
-GLfloat vertices[] = {
-	-1.0f, -1.0f, 0.0f,
-	 1.0f, -1.0f, 0.0f,
-	 1.0f,  1.0f, 0.0f
+GLdouble vertices[] = {
+	-1.0, -1.0, 0.0,
+	 1.0, -1.0, 0.0,
+	 1.0,  1.0, 0.0
 };
 
 int  main(int argc, char** argv)
 {
 	GLFWwindow* window;
 	
-	if (!glewInit())
-	{
-		assert(false && "couldnt initialize glew!");
-		return -1;
-	}
+	
 	if (!glfwInit())
 	{
 		assert(false && "couldnt initialize glfw!");
@@ -52,7 +48,7 @@ int  main(int argc, char** argv)
 	}
 	std::cerr << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
 
-
+	//glViewport(0, 0, 800, 600);
 
 	Shader shaderProgram("vertex.vs","fragment.fs");
 	VAO VAO1;
@@ -63,7 +59,6 @@ int  main(int argc, char** argv)
 	VAO1.LinkVBO(VBO1, 0);
 
 	VAO1.Unbind();
-	VBO1.Unbind();
 
 	while (!glfwWindowShouldClose(window))
 	{

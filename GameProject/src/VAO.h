@@ -15,8 +15,8 @@ class VAO
 
 		void LinkVBO(VBO& VBO, GLuint layout)
 		{
-			VBO.Bind();
-			glVertexAttribLPointer(layout, 3, GL_FLOAT, 0, (void*)0);
+			//VBO.Bind();
+			glVertexAttribLPointer(layout, 3, GL_DOUBLE, 0, (void*)0);
 			glEnableVertexAttribArray(layout);
 			VBO.Unbind();
 		}
