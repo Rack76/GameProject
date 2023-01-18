@@ -13,7 +13,7 @@ class VAO
 			glGenVertexArrays(1, &ID);
 		}
 
-		void LinkVBO(VBO VBO, GLuint layout)
+		void LinkVBO(VBO& VBO, GLuint layout)
 		{
 			VBO.Bind();
 			glVertexAttribLPointer(layout, 3, GL_FLOAT, 0, (void*)0);
