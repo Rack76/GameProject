@@ -1,7 +1,7 @@
 #ifndef VAO_CLASS_H
 #define VAO_CLASS_H
 
-#include "include/glew.h"
+#include "glew.h"
 #include "VBO.h"
 
 class VAO

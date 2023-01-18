@@ -1,7 +1,7 @@
 #ifndef VBO_ClASS_H
 #define VBO_CLASS_H
 
-#include "include/glew.h"
+#include "glew.h"
 
 class VBO
 {

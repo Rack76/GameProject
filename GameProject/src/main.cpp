@@ -1,5 +1,5 @@
 #define GLEW_STATIC
-#include "include/glew.h"
+#include "glew.h"
 #include "glfw3.h"
 #include <cassert>
 
@@ -19,12 +19,12 @@ GLfloat vertices[] = {
 int  main(int argc, char** argv)
 {
 	GLFWwindow* window;
-	/*
+	
 	if (!glewInit())
 	{
 		assert(false && "couldnt initialize glew!");
 		return -1;
-	}*/
+	}
 	if (!glfwInit())
 	{
 		assert(false && "couldnt initialize glfw!");
