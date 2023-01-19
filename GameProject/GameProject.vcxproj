@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\repos\OpenGL\GameProject\GameProject\include;$(ProjectDir)include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\repos\OpenGL\GameProject\GameProject\lib;$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>D:\repos\OpenGL\GameProject\GameProject\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
