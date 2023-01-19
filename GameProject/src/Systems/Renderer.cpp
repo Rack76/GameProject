@@ -42,7 +42,7 @@ void Renderer::update()
 	for (int i = 0; i < game->componentManager.getComponentCount(GRAPHICS); i++)
 	{
 		Graphics* graphicsComponent = game->componentManager.getComponent(GRAPHICS, i);
-		glUseProgram(graphicsComponent->shaderID);//use();
+		glUseProgram(graphicsComponent->shaderID);
 		glBindVertexArray(graphicsComponent->vaoID);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
