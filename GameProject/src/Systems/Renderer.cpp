@@ -18,6 +18,18 @@ Renderer::Renderer(Game* _game) {
     game = _game;
 }
 
+void GLAPIENTRY debugMessageCallback(GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    GLsizei length,
+    const GLchar* message,
+    const void* userParam) {
+
+    std::cout << message << std::endl;
+
+}
+
 void Renderer::init()
 {
 	GLenum err = glewInit();
@@ -27,10 +39,16 @@ void Renderer::init()
 	}
 	std::cerr << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
 
+
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(debugMessageCallback, (const void*)0);
+
 	glViewport(0, 0, 800, 600);
 
     genBuffers();
     createShaderPrograms();
+
 
 }
 
