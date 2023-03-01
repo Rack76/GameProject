@@ -1,33 +1,24 @@
 #include "glew.h"
+#include "WindowManager.h"
 #include "glfw3.h"
 #include "../Game.h"
+#include "ComponentManager.h"
 #include "Renderer.h"
 #include "../ComponentTypes.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "glm/gtc/matrix_access.hpp"
 
 //temp
 GLdouble vertices[] = {
-    -1.0, -1.0, 0.0,
-     1.0, -1.0, 0.0,
-     1.0,  1.0, 0.0
+    -1.0, -1.0, -1.5,
+     1.0, -1.0, -1.5,
+     1.0,  1.0, -1.5
 };
 
 Renderer::Renderer(Game* _game) {
     game = _game;
-}
-
-void GLAPIENTRY debugMessageCallback(GLenum source,
-    GLenum type,
-    GLuint id,
-    GLenum severity,
-    GLsizei length,
-    const GLchar* message,
-    const void* userParam) {
-
-    std::cout << message << std::endl;
-
 }
 
 void Renderer::init()
@@ -39,47 +30,50 @@ void Renderer::init()
 	}
 	std::cerr << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
 
-
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-    glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(debugMessageCallback, (const void*)0);
-
 	glViewport(0, 0, 800, 600);
 
-    genBuffers();
+    loadGraphicsComponents();
     createShaderPrograms();
-
-
 }
 
 
 
 void Renderer::update()
 {
+    glm::mat4 view = glm::mat4(1.0);
+    glm::mat4 viewPerspective = glm::mat4(1.0);
+    Camera* camera = nullptr;
+    if (game->componentManager->getComponentCount(CAMERA))
+    {
+        camera = (Camera*)game->componentManager->getComponent(CAMERA);
+        //glm::vec3 newColumn = -glm::column(camera->orientation, 2);
+        //camera->orientation = glm::column(camera->orientation, 2, newColumn);
+        camera->position += camera->velocity * 0.001f;
+        view = glm::mat4(camera->orientation);
+        glm::mat4 translationMat = glm::translate(glm::mat4(1.0), -camera->position);
+        view = glm::transpose(view) * translationMat;
+        viewPerspective = camera->perspective * view;
+    }
+
     glClear(GL_COLOR_BUFFER_BIT);
-	for (int i = 0; i < game->componentManager.getComponentCount(GRAPHICS); i++)
+	for (int i = 0; i < game->componentManager->getComponentCount(GRAPHICS); i++)
 	{
-		Graphics* graphicsComponent = game->componentManager.getComponent(GRAPHICS, i);
+        Graphics* graphicsComponent = (Graphics*)game->componentManager->getComponent(GRAPHICS, i);
 		glUseProgram(graphicsComponent->shaderID);
 		glBindVertexArray(graphicsComponent->vaoID);
+        GLuint location = glGetUniformLocation(graphicsComponent->shaderID, "worldViewPerspective");
+        glUniformMatrix4fv(location, 1, GL_TRUE, &viewPerspective[0][0]);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
-    glfwSwapBuffers(game->windowManager.getWindow(0));
-    glfwPollEvents();
+    glfwSwapBuffers(game->windowManager->getWindow(0));
 }
 
-void Renderer::deleteGraphicsComponent(int index)
-{
-    Graphics* graphicsComponent = game->componentManager.getComponent(GRAPHICS, index);
-    glDeleteBuffers(1, &graphicsComponent->vboID);
-    glDeleteVertexArrays(1, &graphicsComponent->vaoID);
-}
 
 void Renderer::createShaderPrograms()
 {
-	for (int i = 0; i < game->componentManager.getComponentCount(GRAPHICS); i++)
+	for (int i = 0; i < game->componentManager->getComponentCount(GRAPHICS); i++)
 	{
-		Graphics* graphicsComponent = game->componentManager.getComponent(GRAPHICS, i);
+		Graphics* graphicsComponent = (Graphics*)game->componentManager->getComponent(GRAPHICS, i);
 		const char* vertexPath = graphicsComponent->vertexPath;
 		const char* fragmentPath = graphicsComponent->fragmentPath;
 
@@ -162,20 +156,73 @@ void Renderer::checkCompileErrors(unsigned int shader, std::string type)
     }
 }
 
-void Renderer::genBuffers()
+void Renderer::loadGraphicsComponents()
 {
-    for (int i = 0; i < game->componentManager.getComponentCount(GRAPHICS); i++)
+    for (int i = 0; i < game->componentManager->getComponentCount(GRAPHICS); i++)
     {
-        Graphics* graphicsComponent = game->componentManager.getComponent(GRAPHICS, i);
-        glGenVertexArrays(1, &graphicsComponent->vaoID);
-        glBindVertexArray(graphicsComponent->vaoID);
-        glGenBuffers(1, &graphicsComponent->vaoID);
-        glBindBuffer(GL_ARRAY_BUFFER, graphicsComponent->vaoID);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        glVertexAttribLPointer(0, 3, GL_DOUBLE, 0, (void*)0);
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-        graphicsComponent = nullptr;
+        loadGraphicsComponent(i);
     }
+}
+
+void Renderer::loadGraphicsComponent(int i)
+{
+    Graphics* graphicsComponent = (Graphics*)game->componentManager->getComponent(GRAPHICS, i);
+    glGenVertexArrays(1, &graphicsComponent->vaoID);
+    glBindVertexArray(graphicsComponent->vaoID);
+    glGenBuffers(1, &graphicsComponent->vaoID);
+    glBindBuffer(GL_ARRAY_BUFFER, graphicsComponent->vaoID);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribLPointer(0, 3, GL_DOUBLE, 0, (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void Renderer::rotateCamera(GLFWwindow* window, double x, double y)
+{
+    x -= 400;
+    y -= 300;
+    static float xAngle = 0;
+    static float yAngle = 0;
+    xAngle += y;
+    yAngle -= x;
+    if (xAngle <= -450)
+    {
+        y = 0;
+        xAngle = -450;
+    }
+    if (xAngle >= 450)
+    {
+        y = 0;
+        xAngle = 450;
+    }
+    Camera* camera = (Camera*)game->componentManager->getComponent(CAMERA);
+    glm::vec3 orientation = glm::vec3(sin(yAngle / 1000.0) * cos(xAngle / 1000.0), sin(xAngle / 1000.0), cos(xAngle / 1000.0) * cos(yAngle / 1000.0));
+    glm::vec3 yAxis = glm::vec3(0.0, 1.0, 0.0);
+    glm::vec3 localXAxis = glm::normalize(glm::cross(yAxis, orientation));
+    glm::vec3 localYAxis = glm::normalize(glm::cross(orientation, localXAxis));
+    camera->orientation[0] = localXAxis;
+    camera->orientation[1] = localYAxis;
+    camera->orientation[2] = orientation;
+    glfwSetCursorPos(window, 400, 300);
+}
+
+void Renderer::translateCamera(GLFWwindow* window, int key, int action)
+{
+    Camera* camera = (Camera*)game->componentManager->getComponent(CAMERA);
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera->velocity = glm::normalize(glm::vec3(camera->orientation[2].x, 0, camera->orientation[2].z));
+    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera->velocity = camera->orientation[0];
+    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera->velocity = -camera->orientation[0];
+    else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera->velocity = -glm::normalize(glm::vec3(camera->orientation[2].x, 0, camera->orientation[2].z));
+    else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        camera->velocity = -glm::vec3(0.0, 1.0, 0.0);
+    else if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        camera->velocity = glm::vec3(0.0, 1.0, 0.0);
+    else
+        camera->velocity = glm::vec3(0.0, 0.0, 0.0);
 }

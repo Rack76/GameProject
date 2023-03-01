@@ -5,6 +5,9 @@ class GLFWwindow;
 
 class WindowManager {
 public:
+	WindowManager() {
+		init();
+	}
 	void init();
 	void selectWindow(int);
 	GLFWwindow* getSelectedWindow();

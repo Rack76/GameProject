@@ -1,20 +1,23 @@
 #pragma once
 
-#include "Systems/WindowManager.h"
-#include "Systems/Renderer.h"
-#include "Systems/EntityManager.h"
-#include "Systems/ComponentManager.h"
+class WindowManager;
+class Renderer;
+class EntityManager;
+class ComponentManager;
+class Input;
 
 class Game {
 public:
 
-	Game(): renderer(this) {
-		windowManager.init();
+	Game() {
+		
 	}
 	void init();
 	void run();
-	WindowManager windowManager;
-	Renderer renderer;
-	EntityManager entityManager;
-	ComponentManager componentManager;
+	void cleanUp();
+	WindowManager* windowManager;
+	Renderer* renderer;
+	Input* input;
+	EntityManager* entityManager;
+	ComponentManager* componentManager;
 };

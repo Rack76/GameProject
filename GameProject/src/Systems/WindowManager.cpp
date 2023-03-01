@@ -1,6 +1,6 @@
 #include <cassert>
-#include "glfw3.h"
 #include "WindowManager.h"
+#include "glfw3.h"
 
 void WindowManager::init()
 {

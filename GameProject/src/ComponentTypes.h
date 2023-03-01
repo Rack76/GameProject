@@ -1,3 +1,3 @@
 #pragma once
 
-enum {GRAPHICS};
+enum {GRAPHICS, CAMERA};
